@@ -1,194 +1,347 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, XCircle, ArrowRight, Zap, Target, BookOpen, Briefcase, Map, FileText, Sparkles, Shield, Menu, X, Rocket } from 'lucide-react';
+import {
+  XCircle,
+  ArrowRight,
+  BookOpen,
+  Target,
+  Sparkles,
+  Shield,
+  Menu,
+  X
+} from 'lucide-react';
 import Ballpit from '../src/components/Ballpit';
+import { motion } from 'framer-motion';
 
 const Landing: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="bg-white dark:bg-slate-950 transition-colors">
-      {/* Navigation Bar */}
+
+      {/* NAVBAR */}
       <nav className="fixed top-0 inset-x-0 z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <img src="/logo.png" alt="Synapse Logo" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src="/logo.png" className="w-10 h-10" />
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
               Synapse
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#news" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">News</a>
-            <a href="#contact" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Contact</a>
-            <div className="w-px h-5 bg-gray-200 dark:bg-slate-800"></div>
+            <a href="#news" className="text-sm font-semibold text-gray-600 dark:text-gray-300">News</a>
+            <a href="#contact" className="text-sm font-semibold text-gray-600 dark:text-gray-300">Contact</a>
+
             <Link
               to="/login"
-              className="px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-sm font-bold hover:bg-brand-600 dark:hover:bg-brand-100 transition-all hover:-translate-y-0.5 shadow-lg shadow-gray-900/20 dark:shadow-none"
+              className="px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-sm font-bold"
             >
               Log In
             </Link>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full inset-x-0 bg-white dark:bg-slate-950 border-b border-gray-100 dark:border-slate-800 p-6 space-y-4 animate-in slide-in-from-top-4">
-            <a href="#news" className="block text-lg font-semibold text-gray-600 dark:text-gray-300">News</a>
-            <a href="#contact" className="block text-lg font-semibold text-gray-600 dark:text-gray-300">Contact</a>
-            <hr className="border-gray-100 dark:border-slate-800" />
-            <Link to="/login" className="block w-full py-3 text-center bg-brand-600 text-white rounded-xl font-bold">
-              Log In
-            </Link>
-          </div>
-        )}
       </nav>
 
-      {/* Hero Section */}
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-12 lg:pt-32 lg:pb-20 overflow-hidden min-h-[75vh] flex flex-col justify-center">
-        {/* Background Elements */}
-        <div className="absolute inset-0 z-0 block h-full w-full">
+
+      {/* HERO */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+
+        <div className="absolute inset-0">
           <Ballpit
             count={50}
             gravity={0.7}
             friction={0.8}
             wallBounce={0.8}
-            followCursor={true}
+            followCursor
             colors={[0x8B5CF6, 0x06B6D4, 0xF0ABFC]}
           />
         </div>
-        <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/80 backdrop-blur-[1px] pointer-events-none z-0"></div>
 
-        <div className="container mx-auto px-6 relative z-10 text-center">
+        <div className="container mx-auto px-6 text-center relative z-10">
 
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 dark:bg-slate-900/50 border border-brand-100 dark:border-brand-900/30 text-brand-700 dark:text-brand-400 text-[11px] font-bold uppercase tracking-widest shadow-sm backdrop-blur-sm mb-8 animate-in fade-in zoom-in duration-1000">
-            <Sparkles size={12} className="fill-brand-500/20" /> AI-Powered Smart Study Platform
-          </div>
-
-          {/* Headline */}
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-6 tracking-tight leading-[0.95] mx-auto max-w-5xl">
-            Study Smarter with <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-400 dark:from-violet-400 dark:via-purple-400 dark:to-cyan-300 relative">
-              AI Power.
-              {/* Underline decoration */}
-              <svg className="absolute w-full h-3 -bottom-1 left-0 text-brand-300 dark:text-brand-700 opacity-50 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
-                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="none" />
-              </svg>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="text-6xl lg:text-8xl font-black text-gray-900 dark:text-white mb-6"
+          >
+            Study Smarter with
+            <span className="block bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent">
+              AI Power
             </span>
-          </h1>
+          </motion.h1>
 
-          {/* Emotional Hook */}
-          <p className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-            Stop cramming. Start understanding.
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+            Synapse generates quizzes, summarizes notes, analyzes performance,
+            and creates study plans using AI.
           </p>
 
-          {/* Description */}
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Synapse uses AI to generate quizzes from your notes, summarize lectures, analyze your exam performance, and build personalized study plans — all in one place.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-            <Link
-              to="/login"
-              className="group px-8 py-4 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-            >
-              Get Started for Free
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <button className="px-8 py-4 bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-slate-800 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-slate-800 transition-all hover:border-gray-300 dark:hover:border-slate-700">
-              See How It Works
-            </button>
-          </div>
-
-
-          {/* Dashboard Mockup Removed */}
+          <Link
+            to="/login"
+            className="px-8 py-4 bg-brand-600 text-white rounded-xl font-bold shadow-lg hover:-translate-y-1 transition flex items-center justify-center gap-2 w-fit mx-auto"
+          >
+            Get Started
+            <ArrowRight size={18} />
+          </Link>
 
         </div>
       </section>
 
-      {/* Problem & Solution Section */}
-      <section className="py-32 bg-white dark:bg-slate-950 border-y dark:border-slate-800">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-20 items-center">
-            <div className="space-y-10">
-              <h2 className="text-4xl font-black dark:text-white flex items-center gap-4">
-                The Study Struggle
-              </h2>
-              <p className="text-gray-500 text-lg">Most students drown in notes, cram before exams, and never study efficiently. Synapse fixes that.</p>
-              <div className="grid gap-4">
+
+      {/* PROBLEM + SOLUTION */}
+      <section className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 dark:from-slate-950 dark:via-[#0a0a1a] dark:to-slate-900 border-y dark:border-slate-800/50">
+        
+        {/* Glowing AI Feature Background */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-[20%] -left-[10%] w-[50rem] h-[50rem] bg-indigo-500/10 dark:bg-indigo-500/10 rounded-full blur-[120px]" 
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-[30%] -right-[20%] w-[60rem] h-[60rem] bg-purple-500/10 dark:bg-purple-500/10 rounded-full blur-[150px]" 
+          />
+           <motion.div 
+            animate={{ 
+              scale: [1, 1.1, 1],
+              y: [0, -50, 0],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-0 left-[20%] w-[40rem] h-[30rem] bg-brand-400/10 dark:bg-brand-500/10 rounded-full blur-[100px]" 
+          />
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          
+          <div className="relative grid lg:grid-cols-[1fr_minmax(0,1fr)] gap-16 lg:gap-32 items-center">
+            
+            {/* Vertical Divider */}
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              whileInView={{ height: '100%', opacity: 1 }}
+              transition={{ duration: 1.5, ease: "circOut" }}
+              className="hidden lg:block absolute left-1/2 top-0 w-px bg-gradient-to-b from-transparent via-gray-300 dark:via-slate-700 to-transparent -translate-x-1/2"
+            />
+
+            {/* PROBLEMS */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.15 } },
+                hidden: {}
+              }}
+              className="space-y-12 pr-0 lg:pr-8"
+            >
+
+              <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-gray-200 dark:border-slate-700 mb-8 shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-sm font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">
+                    The Problem
+                  </span>
+                </div>
+
+                {/* Animated gradient heading */}
+                <h2 className="text-5xl lg:text-6xl font-black mb-6 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-indigo-800 to-gray-900 dark:from-white dark:via-indigo-300 dark:to-white" style={{ backgroundSize: '200% auto', animation: 'gradientMove 8s linear infinite' }}>
+                  The Study Struggle
+                </h2>
+
+                <style>{`
+                  @keyframes gradientMove {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                  }
+                `}</style>
+
+                <p className="text-gray-500 dark:text-gray-400 text-xl leading-relaxed max-w-lg font-medium">
+                  Most students cram before exams and struggle to organize
+                  study material effectively. Synapse fixes that.
+                </p>
+              </motion.div>
+
+              <div className="space-y-5">
                 {[
-                  { icon: <XCircle className="text-red-500" />, text: "Piles of unorganized lecture notes" },
-                  { icon: <XCircle className="text-red-500" />, text: "No idea what's important for exams" },
-                  { icon: <XCircle className="text-red-500" />, text: "Can't track academic performance over time" },
-                  { icon: <XCircle className="text-red-500" />, text: "No personalized study plan or schedule" }
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 p-5 bg-gray-50 dark:bg-slate-900 rounded-2xl text-gray-600 dark:text-gray-400 font-bold border dark:border-slate-800">
-                    {item.icon} {item.text}
-                  </div>
+                  "Piles of unorganized lecture notes",
+                  "No idea what's important for exams",
+                  "Can't track academic performance over time",
+                  "No personalized study plan or schedule"
+                ].map((text, i) => (
+                  <motion.div
+                    key={i}
+                    variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.95 },
+                      visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, type: "spring", bounce: 0.4 } }
+                    }}
+                    whileHover={{ scale: 1.03, y: -4, x: 8 }}
+                    className="group flex items-center gap-4 py-3 px-5 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-red-500/5 hover:border-red-200 dark:hover:border-red-900/50 transition-all duration-300 cursor-default"
+                  >
+                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white dark:bg-slate-800 rounded-lg border border-gray-100 dark:border-slate-700 shadow-md group-hover:bg-red-50 dark:group-hover:bg-red-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                      <XCircle className="text-red-500 w-5 h-5" />
+                    </div>
+                    <p className="font-semibold text-gray-700 dark:text-gray-300 text-base">
+                      {text}
+                    </p>
+                  </motion.div>
                 ))}
               </div>
-            </div>
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-brand-500 rounded-3xl opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border dark:border-slate-800 shadow-2xl">
-                <h3 className="text-2xl font-black mb-8 dark:text-white flex items-center gap-3">
-                  <Shield className="text-brand-600" /> Synapse Solution
-                </h3>
-                <div className="space-y-6">
-                  <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl border border-brand-100 dark:border-brand-900/30">
-                    <p className="text-sm font-black text-brand-700 dark:text-brand-400 mb-1">AI QUIZ MAKER</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Generate quizzes from any topic or your own notes instantly.</p>
-                  </div>
-                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-900/30">
-                    <p className="text-sm font-black text-green-700 dark:text-green-400 mb-1">NOTES SUMMARIZER</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Get key points, important terms, and likely exam questions from your notes.</p>
-                  </div>
-                  <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-900/30">
-                    <p className="text-sm font-black text-purple-700 dark:text-purple-400 mb-1">EXAM PREP PLANNER</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">AI-generated study schedules tailored to your upcoming exams.</p>
+            </motion.div>
+
+
+            {/* SOLUTION (Floating Storytelling Section) */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.25, delayChildren: 0.2 } },
+                hidden: {}
+              }}
+              className="relative pl-0 lg:pl-8"
+            >
+              {/* Strengthened decorative background glow */}
+              <motion.div 
+                animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.05, 1] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -inset-16 bg-gradient-to-tr from-brand-500 via-indigo-500 to-cyan-400 opacity-40 dark:opacity-50 blur-[100px] rounded-[4rem] pointer-events-none"
+              ></motion.div>
+
+              <motion.div 
+                variants={{ hidden: { opacity: 0, y: 60, rotateX: 10 }, visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 1, type: "spring", bounce: 0.3 } } }}
+                style={{ perspective: 1000 }}
+                className="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl p-8 md:p-12 rounded-[2.5rem] border border-white/80 dark:border-slate-700/50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]"
+              >
+                
+                <div className="flex items-center gap-5 mb-12">
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className="p-4 bg-gradient-to-tr from-brand-600 to-indigo-500 rounded-2xl shadow-xl shadow-brand-500/40"
+                  >
+                    <Shield className="text-white w-8 h-8" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">
+                      Synapse Solution
+                    </h3>
                   </div>
                 </div>
-              </div>
-            </div>
+
+                <div className="space-y-6">
+                  {[
+                    {
+                      title: "AI QUIZ MAKER",
+                      desc: "Generate quizzes instantly from your notes with advanced AI analysis.",
+                      icon: <Sparkles className="w-6 h-6" />,
+                      bgClasses: "bg-gradient-to-br from-brand-50/80 to-white dark:from-brand-900/30 dark:to-slate-900/80",
+                      iconBg: "bg-brand-100 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 border-brand-200 dark:border-brand-500/30",
+                      titleClass: "text-brand-800 dark:text-brand-300",
+                      hoverColor: "hover:border-brand-300 dark:hover:border-brand-500/50"
+                    },
+                    {
+                      title: "NOTES SUMMARIZER",
+                      desc: "Extract key concepts, definitions, and high-yield summaries.",
+                      icon: <BookOpen className="w-6 h-6" />,
+                      bgClasses: "bg-gradient-to-br from-emerald-50/80 to-white dark:from-emerald-900/30 dark:to-slate-900/80",
+                      iconBg: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
+                      titleClass: "text-emerald-800 dark:text-emerald-300",
+                      hoverColor: "hover:border-emerald-300 dark:hover:border-emerald-500/50"
+                    },
+                    {
+                      title: "EXAM PREP PLANNER",
+                      desc: "AI intelligently generates personalized, adaptive study schedules.",
+                      icon: <Target className="w-6 h-6" />,
+                      bgClasses: "bg-gradient-to-br from-purple-50/80 to-white dark:from-purple-900/30 dark:to-slate-900/80",
+                      iconBg: "bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-500/30",
+                      titleClass: "text-purple-800 dark:text-purple-300",
+                      hoverColor: "hover:border-purple-300 dark:hover:border-purple-500/50"
+                    }
+                  ].map((feature, i) => (
+                    <motion.div
+                      key={i}
+                      variants={{
+                        hidden: { opacity: 0, y: 30, scale: 0.95 },
+                        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, type: "spring", bounce: 0.5 } }
+                      }}
+                      whileHover={{ y: -8, scale: 1.02 }}
+                      className={`group relative overflow-hidden flex items-start gap-5 p-6 rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-md hover:shadow-2xl transition-all duration-300 cursor-default ${feature.bgClasses} ${feature.hoverColor}`}
+                    >
+                      <div className={`shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl border shadow-sm group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 relative ${feature.iconBg}`}>
+                        {feature.icon}
+                        
+                        {/* Apple-style Animated Checkmark */}
+                        <motion.div 
+                          className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-7 h-7 flex items-center justify-center border-[3px] border-white dark:border-slate-900 shadow-lg"
+                          initial={{ scale: 0, opacity: 0 }}
+                          whileInView={{ scale: [0, 1.2, 1], opacity: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.3 + 1, duration: 0.5, type: "spring", stiffness: 200, damping: 12 }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                            <motion.path 
+                              d="M20 6L9 17l-5-5" 
+                              initial={{ pathLength: 0 }}
+                              whileInView={{ pathLength: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.4, delay: i * 0.3 + 1.2, ease: "easeOut" }}
+                            />
+                          </svg>
+                        </motion.div>
+                      </div>
+
+                      <div className="relative z-10 pt-1">
+                        <p className={`font-black ${feature.titleClass} mb-2 tracking-wide text-sm`}>
+                          {feature.title}
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base leading-relaxed font-medium">
+                          {feature.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-20 border-t dark:border-slate-800 bg-white dark:bg-slate-950">
+
+      {/* FOOTER */}
+      <footer className="py-20 border-t dark:border-slate-800">
         <div className="container mx-auto px-6 text-center">
-          <div className="flex justify-center mb-8">
-            <img src="/logo.png" alt="Synapse Logo" className="w-10 h-10 object-contain" />
-          </div>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">&copy; 2026 Synapse. Empowering students to study smarter, not harder.</p>
+
+          <img src="/logo.png" className="w-10 mx-auto mb-6" />
+
+          <p className="text-gray-500 dark:text-gray-400">
+            © 2026 Synapse — Study smarter, not harder.
+          </p>
+
         </div>
       </footer>
+
     </div>
   );
 };
 
-const ModuleCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
-  <div className="bg-white dark:bg-slate-900 p-10 rounded-3xl shadow-sm border dark:border-slate-800 hover:shadow-xl hover:border-brand-300 dark:hover:border-brand-500 transition-all hover:-translate-y-1">
-    <div className="w-14 h-14 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-8 transition-colors">
-      {icon}
-    </div>
-    <h3 className="text-2xl font-black mb-4 dark:text-white">{title}</h3>
-    <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">{description}</p>
-  </div>
-);
-
 export default Landing;
+
