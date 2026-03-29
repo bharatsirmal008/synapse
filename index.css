@@ -28,6 +28,7 @@
   display: inline-block;
   transform: scaleX(1.1);
   transform-origin: left center;
+  padding-bottom: 0.15em;
 }
 
 /* ── Base Styles ── */

@@ -53,47 +53,126 @@ const Landing: React.FC = () => {
 
 
       {/* HERO */}
-      <section className="relative min-h-screen flex flex-col justify-center pt-32 pb-20 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
 
+        {/* Ballpit background */}
         <div className="absolute inset-0">
           <Ballpit
-            count={50}
-            gravity={0.7}
-            friction={0.8}
-            wallBounce={0.8}
+            count={70}
+            gravity={0.3}
+            friction={0.85}
+            wallBounce={0.9}
             followCursor
-            colors={[0x8B5CF6, 0x06B6D4, 0xF0ABFC]}
+            colors={[0x8B5CF6, 0x06B6D4, 0xF0ABFC, 0x7C3AED, 0x22D3EE]}
           />
         </div>
 
-        <div className="container mx-auto px-6 text-center relative z-10">
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950/80 pointer-events-none z-[1]" />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="text-6xl lg:text-8xl font-black text-gray-900 dark:text-white mb-6"
+        {/* Ambient glow blobs */}
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none z-[1]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.25, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none z-[1]"
+        />
+
+        {/* Hero content */}
+        <div className="container mx-auto px-6 text-center relative z-10 py-32">
+
+          {/* Floating badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 shadow-lg"
           >
-            Study Smarter with
-            <span className="block bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent">
-              AI Power
+            <Sparkles size={14} className="text-purple-400" />
+            <span className="text-sm font-bold text-white/90 tracking-wide">AI-Powered Study Platform</span>
+          </motion.div>
+
+          {/* Main heading — word by word stagger */}
+          <div className="text-6xl md:text-7xl lg:text-9xl font-black text-white mb-8 leading-[0.95] tracking-tight">
+            {['Study', 'Smarter'].map((word, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 0.7, delay: 0.3 + i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="inline-block mr-[0.25em]"
+              >
+                {word}
+              </motion.span>
+            ))}
+            <br />
+            <span className="relative inline-block">
+              {['with', 'AI', 'Power'].map((word, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.7, delay: 0.6 + i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="inline-block mr-[0.25em] bg-gradient-to-r from-purple-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent"
+                  style={{ backgroundSize: '200% auto', animation: 'gradientShift 4s ease-in-out infinite' }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </span>
-          </motion.h1>
+          </div>
 
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
-            Synapse generates quizzes, summarizes notes, analyzes performance,
-            and creates study plans using AI.
-          </p>
+          <style>{`
+            @keyframes gradientShift {
+              0%, 100% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+            }
+            @keyframes blink {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0; }
+            }
+          `}</style>
 
-          <Link
-            to="/login"
-            className="px-8 py-4 bg-brand-600 text-white rounded-xl font-bold shadow-lg hover:-translate-y-1 transition flex items-center justify-center gap-2 w-fit mx-auto"
+          {/* Subtitle with fade-up */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.0 }}
+            className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-14 leading-relaxed font-medium"
           >
-            Get Started
-            <ArrowRight size={18} />
-          </Link>
+            Synapse generates quizzes, summarizes notes, analyzes performance,
+            and crafts <span className="text-white font-bold">personalized study plans</span> — all powered by AI
+            <span className="inline-block w-[2px] h-[1.1em] bg-purple-400 ml-1 align-middle" style={{ animation: 'blink 1s step-end infinite' }} />
+          </motion.p>
+
+          {/* CTA button */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 1.2, type: "spring", bounce: 0.4 }}
+          >
+            <Link
+              to="/login"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-brand-600 to-violet-600 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-brand-600/30 hover:shadow-brand-600/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            >
+              {/* Glow ring */}
+              <span className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500" />
+              <span className="absolute inset-0 bg-gradient-to-r from-brand-500 to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10 flex items-center gap-3">
+                Get Started
+                <ArrowRight size={20} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              </span>
+            </Link>
+          </motion.div>
 
         </div>
+
+        {/* Bottom gradient fade into next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none z-[2]" />
       </section>
 
 

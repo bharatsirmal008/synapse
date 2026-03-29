@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, Sun, Moon, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays } from 'lucide-react';
+import { Layout, Briefcase, MessageSquare, Map, FileText, Settings, BarChart, LogOut, User as UserIcon, Sparkles, Brain, TrendingUp, BookOpen, AudioLines, Calculator, Timer, CalendarDays, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { UserProfile } from './types';
 import { auth, googleProvider, getUserProfile, saveUserProfile } from './src/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -29,6 +29,7 @@ import InterviewPrep from './pages/InterviewPrep';
 
 // Contexts
 const ThemeContext = createContext({ isDark: false, toggle: () => { } });
+const SidebarContext = createContext({ isCollapsed: false, toggleSidebar: () => { } });
 const UserContext = createContext<{
   user: UserProfile | null,
   login: (u?: UserProfile) => void,
@@ -42,13 +43,15 @@ const UserContext = createContext<{
 });
 
 export const useTheme = () => useContext(ThemeContext);
+export const useSidebar = () => useContext(SidebarContext);
 export const useUser = () => useContext(UserContext);
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isDark, toggle } = useTheme();
+  const { isDark } = useTheme();
   const { user, logout } = useUser();
+  const { isCollapsed, toggleSidebar } = useSidebar();
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
@@ -75,65 +78,122 @@ const Sidebar = () => {
   if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/profile-setup') return null;
 
   return (
-    <div className="w-80 bg-white dark:bg-slate-900 border-r dark:border-slate-800 h-screen sticky top-0 flex flex-col transition-all duration-300">
-      <div className="p-8 border-b dark:border-slate-800">
-        <Link to="/dashboard" className="text-2xl font-black text-brand-600 dark:text-brand-400 flex items-center gap-3 tracking-tighter group">
-          <img src="/logo.png" alt="Synapse Logo" className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" />
-          <span className="font-logo">Synapse</span>
+    <div
+      className="bg-white dark:bg-slate-900 border-r dark:border-slate-800 h-screen sticky top-0 flex flex-col overflow-hidden"
+      style={{
+        width: isCollapsed ? '80px' : '320px',
+        minWidth: isCollapsed ? '80px' : '320px',
+        transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+    >
+      {/* Logo + Toggle */}
+      <div
+        className={`border-b dark:border-slate-800 flex ${isCollapsed ? 'flex-col items-center gap-3' : 'items-center justify-between'}`}
+        style={{ padding: isCollapsed ? '20px 12px' : '32px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}
+      >
+        <Link to="/dashboard" className="flex items-center gap-3 group">
+          <img src="/logo.png" alt="Synapse Logo" className={`${isCollapsed ? 'w-10 h-10' : 'w-12 h-12'} object-contain flex-shrink-0 group-hover:scale-110 transition-all duration-300 drop-shadow-md`} />
+          {!isCollapsed && (
+            <span className="text-3xl font-black text-brand-600 dark:text-brand-400 font-logo whitespace-nowrap">
+              Synapse
+            </span>
+          )}
         </Link>
+
+        <button
+          onClick={toggleSidebar}
+          className="p-2 rounded-xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 dark:hover:text-brand-400 transition-all duration-300 flex-shrink-0"
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {isCollapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={20} />}
+        </button>
       </div>
 
-      <nav className="flex-1 p-6 space-y-2 overflow-y-auto custom-scrollbar">
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 ml-4">Main Menu</p>
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`relative flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 group overflow-hidden ${isActive(item.path)
-              ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 font-bold'
-              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
-              }`}
-          >
-            {isActive(item.path) && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-600 dark:bg-brand-400 rounded-r-full"></div>
-            )}
-            <item.icon size={22} className={`transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-3'}`} />
-            <span className="text-sm tracking-wide">{item.label}</span>
-          </Link>
-        ))}
+      {/* Nav items */}
+      <nav className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: isCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+        <p
+          className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 whitespace-nowrap overflow-hidden"
+          style={{
+            opacity: isCollapsed ? 0 : 1,
+            height: isCollapsed ? 0 : 'auto',
+            marginBottom: isCollapsed ? 0 : '16px',
+            marginLeft: isCollapsed ? 0 : '16px',
+            transition: 'opacity 0.2s ease, height 0.3s ease, margin 0.3s ease',
+          }}
+        >
+          Main Menu
+        </p>
+        <div className="space-y-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              title={isCollapsed ? item.label : undefined}
+              className={`relative flex items-center rounded-xl transition-all duration-300 group overflow-hidden ${isActive(item.path)
+                ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              style={{
+                padding: isCollapsed ? '12px' : '12px 20px',
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                gap: isCollapsed ? '0' : '16px',
+                transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1), gap 0.35s ease, justify-content 0.35s ease',
+              }}
+            >
+              {isActive(item.path) && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-600 dark:bg-brand-400 rounded-r-full"></div>
+              )}
+              <item.icon
+                size={22}
+                className={`flex-shrink-0 transition-transform duration-300 ${isActive(item.path) ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-3'}`}
+              />
+              <span
+                className="text-sm tracking-wide whitespace-nowrap"
+                style={{
+                  opacity: isCollapsed ? 0 : 1,
+                  width: isCollapsed ? 0 : 'auto',
+                  overflow: 'hidden',
+                  transition: 'opacity 0.2s ease, width 0.3s ease',
+                }}
+              >
+                {item.label}
+              </span>
+            </Link>
+          ))}
+        </div>
       </nav>
 
-      <div className="p-6 border-t dark:border-slate-800 space-y-6 bg-gray-50/50 dark:bg-slate-900/50">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggle}
-            className="flex-1 flex items-center justify-center gap-3 py-3 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-2xl shadow-sm text-gray-600 dark:text-gray-400 hover:bg-brand-50 dark:hover:bg-brand-900/10 hover:text-brand-600 transition-all font-bold text-xs uppercase tracking-widest"
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            {isDark ? 'Light' : 'Dark'}
-          </button>
-        </div>
+      {/* Bottom section */}
+      <div className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50" style={{ padding: isCollapsed ? '16px 12px' : '24px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
 
-        <div className="p-4 bg-white dark:bg-slate-800 rounded-3xl border dark:border-slate-700 shadow-sm space-y-4">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner">
+        {/* User card */}
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border dark:border-slate-700 shadow-sm overflow-hidden" style={{ padding: isCollapsed ? '10px' : '16px', transition: 'padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+          <div className="flex items-center overflow-hidden" style={{ gap: isCollapsed ? '0' : '12px', justifyContent: isCollapsed ? 'center' : 'flex-start', transition: 'gap 0.35s ease' }}>
+            <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 flex-shrink-0 shadow-inner" title={isCollapsed ? (user?.name || 'Guest') : undefined}>
               {user?.avatar ? (
                 <img src={user.avatar} className="w-full h-full object-cover rounded-2xl" referrerPolicy="no-referrer" />
               ) : (
                 <UserIcon size={20} />
               )}
             </div>
-            <div className="truncate flex-1">
-              <p className="text-sm font-black truncate dark:text-white tracking-tight">{user?.name || 'Guest'}</p>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{user?.targetRole || 'Explorer'}</p>
-            </div>
-            <button onClick={() => { logout(); navigate('/'); }} className="p-2 text-gray-300 hover:text-red-500 transition-colors">
-              <LogOut size={18} />
-            </button>
+            {!isCollapsed && (
+              <>
+                <div className="truncate flex-1">
+                  <p className="text-sm font-black truncate dark:text-white tracking-tight">{user?.name || 'Guest'}</p>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{user?.targetRole || 'Explorer'}</p>
+                </div>
+                <button
+                  onClick={() => { logout(); navigate('/'); }}
+                  className="p-2 text-gray-300 hover:text-red-500 transition-colors flex-shrink-0"
+                >
+                  <LogOut size={18} />
+                </button>
+              </>
+            )}
           </div>
 
-          {user?.targetRole && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-brand-50 dark:bg-brand-900/20 rounded-lg">
+          {user?.targetRole && !isCollapsed && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-brand-50 dark:bg-brand-900/20 rounded-lg mt-3">
               <Sparkles size={12} className="text-brand-600" />
               <span className="text-[10px] font-black text-brand-700 dark:text-brand-300 uppercase tracking-tighter">AI Optimized</span>
             </div>
@@ -160,14 +220,20 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App: React.FC = () => {
-  const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [isDark] = useState(true);
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
+
+  const toggleSidebar = () => {
+    setIsCollapsed(prev => {
+      localStorage.setItem('sidebar-collapsed', String(!prev));
+      return !prev;
+    });
+  };
 
   useEffect(() => {
-    if (isDark) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
+    document.documentElement.classList.add('dark');
+  }, []);
 
   useEffect(() => {
     // Listen for auth state changes
@@ -223,11 +289,12 @@ const App: React.FC = () => {
 
   return (
     <UserContext.Provider value={{ user, login, logout, updateProfile }}>
-      <ThemeContext.Provider value={{ isDark, toggle: () => setIsDark(!isDark) }}>
+      <ThemeContext.Provider value={{ isDark, toggle: () => {} }}>
+        <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
         <Router>
           <div className="flex min-h-screen transition-colors">
             <Sidebar />
-            <main className="flex-1 bg-gray-50 dark:bg-slate-950 overflow-auto scroll-smooth">
+            <main className="flex-1 bg-gray-50 dark:bg-slate-950 overflow-auto scroll-smooth" style={{ transition: 'margin 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
@@ -251,6 +318,7 @@ const App: React.FC = () => {
             </main>
           </div>
         </Router>
+        </SidebarContext.Provider>
       </ThemeContext.Provider>
     </UserContext.Provider>
   );

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../App';
-import { ArrowRight, Sparkles, GraduationCap, Target, Rocket, Briefcase } from 'lucide-react';
+import { ArrowRight, Sparkles, GraduationCap, Target, Rocket, Briefcase, Check, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ProfileSetup: React.FC = () => {
   const { user, updateProfile } = useUser();
@@ -23,191 +24,342 @@ const ProfileSetup: React.FC = () => {
     }
   };
 
+  const stepVariants = {
+    enter: { opacity: 0, x: 40, scale: 0.98 },
+    center: { opacity: 1, x: 0, scale: 1 },
+    exit: { opacity: 0, x: -40, scale: 0.98 },
+  };
+
+  const steps = [
+    { icon: Target, label: 'Focus', desc: 'Career path' },
+    { icon: GraduationCap, label: 'Details', desc: 'Your info' },
+    { icon: Rocket, label: 'Launch', desc: 'Ready!' },
+  ];
+
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-6 transition-colors duration-500">
-      <div className="max-w-xl w-full">
-        {/* Progress Navigation */}
-        <div className="flex items-center justify-between mb-12 px-2">
-          {[1, 2, 3].map(s => (
-            <div key={s} className="flex flex-col items-center gap-2 flex-1 relative">
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black transition-all duration-500 z-10 ${
-                step >= s 
-                  ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/20' 
-                  : 'bg-gray-100 dark:bg-slate-900 text-gray-400'
-              }`}>
-                {s === 1 ? <Target size={18} /> : s === 2 ? <GraduationCap size={18} /> : <Rocket size={18} />}
-              </div>
-              <span className={`text-[10px] font-black uppercase tracking-widest ${step >= s ? 'text-brand-600' : 'text-gray-400'}`}>
-                {s === 1 ? 'Focus' : s === 2 ? 'Details' : 'Launch'}
-              </span>
-              {s < 3 && (
-                <div className={`absolute left-1/2 w-full h-1 top-5 -z-0 ${step > s ? 'bg-brand-600' : 'bg-gray-100 dark:bg-slate-900'}`} />
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+
+      {/* Ambient background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.12, 0.22, 0.12] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] left-[20%] w-[600px] h-[600px] bg-brand-600/15 rounded-full blur-[150px]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.08, 0.18, 0.08] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute bottom-[10%] right-[15%] w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[120px]"
+        />
+      </div>
+
+      <div className="max-w-xl w-full relative z-10">
+
+        {/* Progress stepper */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center justify-between mb-12 px-4"
+        >
+          {steps.map((s, i) => (
+            <React.Fragment key={i}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center gap-2 relative"
+              >
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black transition-all duration-500 border-2 ${
+                  step > i + 1
+                    ? 'bg-green-500 border-green-400 text-white shadow-lg shadow-green-500/20'
+                    : step === i + 1
+                    ? 'bg-brand-600 border-brand-500 text-white shadow-lg shadow-brand-500/30'
+                    : 'bg-slate-900 border-slate-800 text-gray-500'
+                }`}>
+                  {step > i + 1 ? <Check size={20} /> : <s.icon size={20} />}
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${
+                  step >= i + 1 ? 'text-white' : 'text-gray-600'
+                }`}>
+                  {s.label}
+                </span>
+              </motion.div>
+              {i < 2 && (
+                <div className={`flex-1 h-0.5 mx-3 rounded-full transition-all duration-700 ${
+                  step > i + 1 ? 'bg-green-500' : 'bg-slate-800'
+                }`} />
               )}
-            </div>
+            </React.Fragment>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="bg-gray-50 dark:bg-slate-900 p-10 sm:p-12 rounded-[3.5rem] border dark:border-slate-800 shadow-2xl space-y-10 animate-in fade-in zoom-in-95 duration-500 relative overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl"></div>
-          
-          {step === 1 && (
-            <div className="space-y-8 relative z-10">
-              <div className="space-y-3">
-                <h2 className="text-3xl font-black dark:text-white tracking-tight">Define your dream.</h2>
-                <p className="text-gray-500 dark:text-gray-400 font-medium">Which career path should Synapse optimize for you?</p>
-              </div>
-              
-              <div className="relative group">
-                <Briefcase className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-600 group-focus-within:scale-110 transition-transform" size={24} />
-                <input 
-                  autoFocus
-                  type="text"
-                  placeholder="e.g. Frontend Engineer, Product Manager"
-                  className="w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-800 rounded-3xl border-2 border-transparent focus:border-brand-600 outline-none text-xl font-bold dark:text-white shadow-sm transition-all"
-                  value={details.targetRole}
-                  onChange={(e) => setDetails({...details, targetRole: e.target.value})}
-                  onKeyDown={(e) => e.key === 'Enter' && details.targetRole && next()}
-                />
-              </div>
+        {/* Main card */}
+        <div className="bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] border border-slate-800/80 shadow-2xl shadow-black/40 relative overflow-hidden">
+          {/* Decorative glows */}
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-600/15 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl" />
 
-              <div className="flex flex-wrap gap-2">
-                 {['SDE-1', 'Data Scientist', 'UI/UX Designer', 'Mobile Dev'].map(preset => (
-                   <button 
-                     key={preset}
-                     onClick={() => setDetails({...details, targetRole: preset})}
-                     className="px-4 py-2 bg-white dark:bg-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:text-brand-600 border dark:border-slate-700 transition-colors"
-                   >
-                     + {preset}
-                   </button>
-                 ))}
-              </div>
+          <div className="p-10 sm:p-12 relative z-10">
+            <AnimatePresence mode="wait">
 
-              <button 
-                disabled={!details.targetRole}
-                onClick={next}
-                className="w-full py-5 bg-brand-600 text-white rounded-2xl font-black text-lg hover:bg-brand-700 disabled:opacity-50 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-500/20 active:scale-[0.98]"
-              >
-                Continue Setup <ArrowRight size={22} />
-              </button>
-            </div>
-          )}
+              {/* Step 1: Career Focus */}
+              {step === 1 && (
+                <motion.div
+                  key="step1"
+                  variants={stepVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  className="space-y-8"
+                >
+                  <div className="space-y-3">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-3xl font-black text-white tracking-tight"
+                    >
+                      What's your dream role?
+                    </motion.h2>
+                    <p className="text-gray-400 font-medium">Synapse will tailor everything to your career path.</p>
+                  </div>
 
-          {step === 2 && (
-            <div className="space-y-8 relative z-10">
-              <div className="space-y-3">
-                <h2 className="text-3xl font-black dark:text-white tracking-tight">Calibration.</h2>
-                <p className="text-gray-500 dark:text-gray-400 font-medium">We tailor our AI responses based on your timeline.</p>
-              </div>
+                  <div className="relative group">
+                    <Briefcase className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-500 transition-colors" size={22} />
+                    <input
+                      autoFocus
+                      type="text"
+                      placeholder="e.g. Frontend Engineer"
+                      className="w-full pl-14 pr-6 py-5 bg-slate-800/80 rounded-2xl border-2 border-slate-700/50 focus:border-brand-500 outline-none text-lg font-bold text-white placeholder-gray-600 transition-all"
+                      value={details.targetRole}
+                      onChange={(e) => setDetails({...details, targetRole: e.target.value})}
+                      onKeyDown={(e) => e.key === 'Enter' && details.targetRole && next()}
+                    />
+                  </div>
 
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Class of</label>
-                  <div className="grid grid-cols-3 gap-4">
-                    {['2025', '2026', '2027'].map(year => (
-                      <button 
-                        key={year}
-                        onClick={() => setDetails({...details, graduationYear: year})}
-                        className={`py-5 rounded-3xl font-black transition-all border-4 ${
-                          details.graduationYear === year 
-                            ? 'border-brand-600 bg-white dark:bg-slate-800 text-brand-600 shadow-lg' 
-                            : 'border-transparent bg-white/50 dark:bg-slate-800/50 text-gray-400 hover:bg-white dark:hover:bg-slate-800'
+                  <div className="flex flex-wrap gap-2">
+                    {['SDE-1', 'Data Scientist', 'UI/UX Designer', 'Mobile Dev', 'Product Manager'].map((preset, i) => (
+                      <motion.button
+                        key={preset}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 + i * 0.05 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setDetails({...details, targetRole: preset})}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                          details.targetRole === preset
+                            ? 'bg-brand-600 border-brand-500 text-white shadow-lg shadow-brand-500/20'
+                            : 'bg-slate-800/80 border-slate-700/50 text-gray-400 hover:text-white hover:border-slate-600'
                         }`}
                       >
-                        {year}
-                      </button>
+                        {preset}
+                      </motion.button>
                     ))}
                   </div>
-                </div>
 
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Experience Level</label>
-                  <div className="grid grid-cols-1 gap-3">
-                    {(['Beginner', 'Intermediate', 'Advanced'] as const).map(level => (
-                      <button 
-                        key={level}
-                        onClick={() => setDetails({...details, currentLevel: level})}
-                        className={`p-6 rounded-3xl text-left transition-all border-4 flex justify-between items-center group ${
-                          details.currentLevel === level 
-                            ? 'border-brand-600 bg-white dark:bg-slate-800 shadow-lg' 
-                            : 'border-transparent bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800'
-                        }`}
-                      >
-                        <div>
-                          <p className={`font-black ${details.currentLevel === level ? 'text-brand-600' : 'text-gray-700 dark:text-gray-300'}`}>{level}</p>
-                          <p className="text-[10px] font-bold text-gray-400 mt-0.5">
-                            {level === 'Beginner' ? 'Fundamental knowledge only' : level === 'Intermediate' ? 'Built some real projects' : 'Ready for interview revision'}
-                          </p>
-                        </div>
-                        <div className={`w-3 h-3 rounded-full ${details.currentLevel === level ? 'bg-brand-600 animate-pulse' : 'bg-gray-200 dark:bg-slate-700'}`} />
-                      </button>
-                    ))}
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={!details.targetRole}
+                    onClick={next}
+                    className="w-full py-5 bg-gradient-to-r from-brand-600 to-violet-600 text-white rounded-2xl font-black text-lg disabled:opacity-40 disabled:from-slate-700 disabled:to-slate-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-500/20"
+                  >
+                    Continue <ArrowRight size={20} />
+                  </motion.button>
+                </motion.div>
+              )}
+
+              {/* Step 2: Calibration */}
+              {step === 2 && (
+                <motion.div
+                  key="step2"
+                  variants={stepVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  className="space-y-8"
+                >
+                  <div className="space-y-3">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-3xl font-black text-white tracking-tight"
+                    >
+                      Calibration
+                    </motion.h2>
+                    <p className="text-gray-400 font-medium">We tailor AI responses based on your background.</p>
                   </div>
-                </div>
-              </div>
 
-              <button 
-                onClick={next}
-                className="w-full py-5 bg-brand-600 text-white rounded-2xl font-black text-lg hover:bg-brand-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-500/20 active:scale-[0.98]"
-              >
-                Finalize Path <ArrowRight size={22} />
-              </button>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-8 text-center relative z-10">
-              <div className="relative inline-block mb-4">
-                <div className="w-24 h-24 bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded-[2rem] flex items-center justify-center mx-auto ring-8 ring-brand-50 dark:ring-brand-950/20">
-                  <Sparkles size={48} className="animate-bounce" />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <h2 className="text-4xl font-black dark:text-white tracking-tighter">Systems Online.</h2>
-                <p className="text-gray-500 dark:text-gray-400 font-medium">Your personalized AI dashboard is ready.</p>
-              </div>
-              
-              <div className="p-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border dark:border-slate-700 text-left space-y-6 shadow-sm">
-                <div className="flex items-center justify-between border-b dark:border-slate-700 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-brand-600 overflow-hidden border-2 border-white dark:border-slate-800">
-                      {user?.avatar && <img src={user.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />}
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Graduation Year</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {['2025', '2026', '2027'].map(year => (
+                          <motion.button
+                            key={year}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setDetails({...details, graduationYear: year})}
+                            className={`py-4 rounded-2xl font-black text-lg transition-all border-2 ${
+                              details.graduationYear === year
+                                ? 'border-brand-500 bg-brand-600/10 text-brand-400 shadow-lg shadow-brand-500/10'
+                                : 'border-slate-800 bg-slate-800/50 text-gray-500 hover:border-slate-600 hover:text-gray-300'
+                            }`}
+                          >
+                            {year}
+                          </motion.button>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-black text-gray-400 uppercase">Profile</p>
-                      <p className="font-bold dark:text-white">{user?.name}</p>
+
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">Experience Level</label>
+                      <div className="space-y-3">
+                        {([
+                          { level: 'Beginner' as const, desc: 'Fundamental knowledge only', emoji: '🌱' },
+                          { level: 'Intermediate' as const, desc: 'Built some real projects', emoji: '🚀' },
+                          { level: 'Advanced' as const, desc: 'Ready for interview revision', emoji: '⚡' },
+                        ]).map(({ level, desc, emoji }) => (
+                          <motion.button
+                            key={level}
+                            whileHover={{ scale: 1.02, x: 4 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setDetails({...details, currentLevel: level})}
+                            className={`w-full p-5 rounded-2xl text-left transition-all border-2 flex items-center gap-4 group ${
+                              details.currentLevel === level
+                                ? 'border-brand-500 bg-brand-600/10 shadow-lg shadow-brand-500/10'
+                                : 'border-slate-800 bg-slate-800/30 hover:border-slate-600'
+                            }`}
+                          >
+                            <span className="text-2xl">{emoji}</span>
+                            <div className="flex-1">
+                              <p className={`font-black ${details.currentLevel === level ? 'text-brand-400' : 'text-gray-300'}`}>{level}</p>
+                              <p className="text-[11px] font-medium text-gray-500">{desc}</p>
+                            </div>
+                            <ChevronRight size={18} className={`transition-all ${details.currentLevel === level ? 'text-brand-400 translate-x-1' : 'text-gray-700'}`} />
+                          </motion.button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-black text-gray-400 uppercase">Class</p>
-                    <p className="font-bold dark:text-white">{details.graduationYear}</p>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={next}
+                    className="w-full py-5 bg-gradient-to-r from-brand-600 to-violet-600 text-white rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-500/20"
+                  >
+                    Almost there <ArrowRight size={20} />
+                  </motion.button>
+                </motion.div>
+              )}
+
+              {/* Step 3: Launch */}
+              {step === 3 && (
+                <motion.div
+                  key="step3"
+                  variants={stepVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  className="space-y-8 text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                    className="relative inline-block"
+                  >
+                    <div className="w-24 h-24 bg-gradient-to-br from-brand-600 to-violet-600 text-white rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl shadow-brand-500/30">
+                      <Sparkles size={44} />
+                    </div>
+                    <motion.div
+                      animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 bg-brand-500 rounded-[2rem] blur-xl"
+                    />
+                  </motion.div>
+
+                  <div className="space-y-2">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-4xl font-black text-white tracking-tight"
+                    >
+                      You're all set!
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-gray-400 font-medium"
+                    >
+                      Your AI dashboard is ready and waiting.
+                    </motion.p>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                   <div>
-                      <p className="text-xs font-black text-gray-400 uppercase">Target Goal</p>
-                      <p className="text-xl font-black text-brand-600">{details.targetRole}</p>
-                   </div>
-                   <div className="px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-600 dark:text-green-400 text-[10px] font-black uppercase tracking-widest">
-                      Ready
-                   </div>
-                </div>
-              </div>
+                  {/* Summary card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="p-6 bg-slate-800/60 rounded-2xl border border-slate-700/50 text-left space-y-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-brand-600 overflow-hidden border-2 border-slate-700 flex-shrink-0">
+                        {user?.avatar ? (
+                          <img src={user.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white"><Sparkles size={20} /></div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-white">{user?.name}</p>
+                        <p className="text-xs text-gray-500 font-bold">Class of {details.graduationYear} · {details.currentLevel}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-700/50">
+                      <div>
+                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target Role</p>
+                        <p className="text-lg font-black text-brand-400">{details.targetRole}</p>
+                      </div>
+                      <div className="px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+                        <span className="text-[10px] font-black text-green-400 uppercase tracking-widest">Ready</span>
+                      </div>
+                    </div>
+                  </motion.div>
 
-              <button 
-                onClick={finish}
-                className="w-full py-5 bg-brand-600 text-white rounded-2xl font-black text-xl hover:bg-brand-700 transition-all shadow-2xl shadow-brand-500/40 active:scale-[0.98] animate-pulse"
-              >
-                Launch Dashboard
-              </button>
-            </div>
-          )}
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={finish}
+                    className="w-full py-5 bg-gradient-to-r from-brand-600 to-violet-600 text-white rounded-2xl font-black text-xl shadow-2xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all flex items-center justify-center gap-3"
+                  >
+                    <Rocket size={22} /> Launch Dashboard
+                  </motion.button>
+                </motion.div>
+              )}
+
+            </AnimatePresence>
+          </div>
         </div>
-        
-        <p className="text-center mt-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-           Synapse Engine v2.0
-        </p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-8 text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]"
+        >
+          Synapse Engine v2.0
+        </motion.p>
       </div>
     </div>
   );

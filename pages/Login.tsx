@@ -2,7 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../App';
-import { Shield, Sparkles, AlertCircle, Terminal, User as UserIcon } from 'lucide-react';
+import { Sparkles, User as UserIcon, ArrowRight, Zap, Brain, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 declare global {
   interface Window {
@@ -14,7 +15,6 @@ const Login: React.FC = () => {
   const { user, login } = useUser();
   const navigate = useNavigate();
   const googleBtnRef = useRef<HTMLDivElement>(null);
-  const [showDevLogin, setShowDevLogin] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -26,7 +26,6 @@ const Login: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Helper to decode the Google JWT (if real)
   const decodeJwt = (token: string) => {
     try {
       const base64Url = token.split('.')[1];
@@ -41,7 +40,6 @@ const Login: React.FC = () => {
   };
 
   const processUserAndRedirect = (userData: any) => {
-    // Check if user already has saved preferences in local storage
     const existingRaw = localStorage.getItem('user');
     if (existingRaw) {
       const existing = JSON.parse(existingRaw);
@@ -54,7 +52,6 @@ const Login: React.FC = () => {
         }
       }
     }
-
     login(userData);
     navigate('/profile-setup');
   };
@@ -62,7 +59,6 @@ const Login: React.FC = () => {
   const handleCredentialResponse = (response: any) => {
     const payload = decodeJwt(response.credential);
     if (!payload) {
-      // If payload is null (like in the demo bypass), we use a high-quality mock
       const demoUser = {
         name: 'Demo Student',
         email: 'student@university.edu',
@@ -92,61 +88,126 @@ const Login: React.FC = () => {
       if (window.google) {
         try {
           window.google.accounts.id.initialize({
-            // Note: This ID is a placeholder. Real OAuth requires a client_id registered for your domain.
             client_id: '1065445353526-mrtre7f9o0p6p0v0p0p0p0p0p0p0p0.apps.googleusercontent.com',
             callback: handleCredentialResponse,
           });
-
           if (googleBtnRef.current) {
             window.google.accounts.id.renderButton(googleBtnRef.current, {
-              theme: 'outline',
-              size: 'large',
-              width: '100%',
-              text: 'signin_with',
+              theme: 'outline', size: 'large', width: '100%', text: 'signin_with',
             });
           }
         } catch (err) {
-          console.warn('Google Sign-In initialization failed (likely due to invalid Client ID).');
+          console.warn('Google Sign-In initialization failed.');
         }
       }
     };
-
     const checkInterval = setInterval(() => {
-      if (window.google) {
-        initializeGoogleSignIn();
-        clearInterval(checkInterval);
-      }
+      if (window.google) { initializeGoogleSignIn(); clearInterval(checkInterval); }
     }, 100);
-
     return () => clearInterval(checkInterval);
   }, []);
 
+  const features = [
+    { icon: Zap, label: 'AI Quizzes', color: 'from-amber-500 to-orange-600' },
+    { icon: Brain, label: 'Smart Notes', color: 'from-purple-500 to-violet-600' },
+    { icon: Shield, label: 'Exam Prep', color: 'from-emerald-500 to-teal-600' },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 p-6 transition-colors duration-500">
-      <div className="max-w-md w-full text-center space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="min-h-screen flex bg-slate-950 overflow-hidden relative">
 
-        <div className="relative inline-block">
-          <img src="/logo.png" alt="Synapse Logo" className="w-24 h-24 object-contain shadow-2xl shadow-brand-500/40 relative z-10 rounded-[2rem]" />
-          <div className="absolute -inset-4 bg-brand-500 rounded-[2.5rem] blur-2xl opacity-20 animate-pulse"></div>
-        </div>
+      {/* Ambient background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-brand-600/20 rounded-full blur-[150px]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] bg-cyan-500/15 rounded-full blur-[120px]"
+        />
+      </div>
 
-        <div className="space-y-3">
-          <h1 className="text-4xl font-black dark:text-white tracking-tighter sm:text-5xl font-logo">Synapse</h1>
-          <p className="text-gray-500 dark:text-gray-400 font-medium text-lg leading-tight">
-            The intelligent engine for your career takeoff.
+      {/* Left decorative panel */}
+      <div className="hidden lg:flex flex-col justify-center items-center flex-1 relative z-10 p-16">
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-lg text-left"
+        >
+          <div className="flex items-center gap-4 mb-10">
+            <img src="/logo.png" alt="Synapse" className="w-14 h-14 rounded-2xl shadow-2xl shadow-brand-500/30" />
+            <span className="text-3xl font-black text-white font-logo">Synapse</span>
+          </div>
+
+          <h2 className="text-5xl font-black text-white leading-[1.1] mb-6 tracking-tight">
+            Your AI-powered
+            <br />
+            <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              study companion.
+            </span>
+          </h2>
+
+          <p className="text-gray-400 text-lg leading-relaxed mb-12 font-medium">
+            Join thousands of students using Synapse to study smarter, ace exams, and build their careers with AI.
           </p>
-        </div>
 
-        <div className="bg-gray-50 dark:bg-slate-900 p-10 rounded-[3rem] border dark:border-slate-800 shadow-xl space-y-8 relative overflow-hidden">
-          {/* Subtle background decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+          {/* Feature pills */}
+          <div className="flex flex-col gap-4">
+            {features.map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 + i * 0.15 }}
+                className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all group"
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                  <f.icon size={22} className="text-white" />
+                </div>
+                <span className="text-white font-bold text-sm">{f.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
 
-          <div className="space-y-6 relative z-10">
-            <div className="space-y-4">
-              <div className="w-full">
-                <button
+      {/* Right login panel */}
+      <div className="flex-1 flex items-center justify-center relative z-10 p-6 lg:p-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="w-full max-w-md"
+        >
+          {/* Card */}
+          <div className="bg-slate-900/80 backdrop-blur-2xl p-10 rounded-[2.5rem] border border-slate-800/80 shadow-2xl shadow-black/40 relative overflow-hidden">
+            {/* Decorative corner glow */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-600/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl" />
+
+            <div className="relative z-10 space-y-8">
+              {/* Mobile logo */}
+              <div className="lg:hidden flex items-center justify-center gap-3 mb-4">
+                <img src="/logo.png" alt="Synapse" className="w-12 h-12 rounded-2xl shadow-xl shadow-brand-500/20" />
+                <span className="text-2xl font-black text-white font-logo">Synapse</span>
+              </div>
+
+              <div className="text-center space-y-2">
+                <h1 className="text-3xl font-black text-white tracking-tight">Welcome back</h1>
+                <p className="text-gray-400 font-medium">Sign in to continue your learning journey</p>
+              </div>
+
+              {/* Auth buttons */}
+              <div className="space-y-4">
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => login()}
-                  className="w-full flex items-center justify-center gap-3 py-4 px-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                  className="w-full flex items-center justify-center gap-3 py-4 px-6 bg-white rounded-2xl font-bold text-gray-800 shadow-lg hover:shadow-xl transition-all"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -155,56 +216,54 @@ const Login: React.FC = () => {
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   </svg>
                   Continue with Google
-                </button>
+                </motion.button>
+
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-1 bg-slate-800" />
+                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">or</span>
+                  <div className="h-px flex-1 bg-slate-800" />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleCredentialResponse({ credential: null })}
+                  className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-gradient-to-r from-brand-600 to-violet-600 text-white rounded-2xl font-bold shadow-xl shadow-brand-600/25 hover:shadow-brand-600/40 transition-all"
+                >
+                  <UserIcon size={18} />
+                  Continue as Guest
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </motion.button>
               </div>
 
-              <div className="flex items-center gap-4 py-2">
-                <div className="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Or Instant Access</span>
-                <div className="h-px flex-1 bg-gray-200 dark:bg-slate-800"></div>
+              {/* Note */}
+              <div className="p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                <p className="text-[11px] text-gray-400 leading-relaxed text-center">
+                  Use <span className="text-white font-bold">Guest Access</span> to explore all features instantly — no account needed.
+                </p>
               </div>
-
-              <button
-                onClick={() => handleCredentialResponse({ credential: null })}
-                className="group w-full flex items-center justify-center gap-3 py-4 px-6 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 hover:-translate-y-0.5 active:scale-95"
-              >
-                <UserIcon size={18} className="group-hover:scale-110 transition-transform" />
-                Continue as Guest
-              </button>
             </div>
+          </div>
 
-            <div className="p-5 bg-white dark:bg-slate-950 rounded-2xl border dark:border-slate-800 text-left space-y-3">
-              <div className="flex items-center gap-2 text-brand-600 dark:text-brand-400">
-                <AlertCircle size={16} />
-                <span className="text-xs font-black uppercase tracking-widest">Auth Note</span>
+          {/* Trust badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex items-center justify-center gap-6 mt-8"
+          >
+            {[
+              { icon: Shield, label: 'Secure' },
+              { icon: Sparkles, label: 'AI Powered' },
+              { icon: Zap, label: 'Instant' },
+            ].map((b, i) => (
+              <div key={i} className="flex items-center gap-2 text-gray-500">
+                <b.icon size={14} />
+                <span className="text-[10px] font-bold uppercase tracking-wider">{b.label}</span>
               </div>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                Real Google Login requires a domain-verified Client ID. For this MVP, use the <b>Guest Access</b> to test all features immediately.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400">
-              <Shield size={20} />
-            </div>
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Verified</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400">
-              <Sparkles size={20} />
-            </div>
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">AI Ready</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400">
-              <UserIcon size={20} />
-            </div>
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Personal</span>
-          </div>
-        </div>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
