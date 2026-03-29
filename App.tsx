@@ -79,7 +79,7 @@ const Sidebar = () => {
       <div className="p-8 border-b dark:border-slate-800">
         <Link to="/dashboard" className="text-2xl font-black text-brand-600 dark:text-brand-400 flex items-center gap-3 tracking-tighter group">
           <img src="/logo.png" alt="Synapse Logo" className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" />
-          Synapse
+          <span className="font-logo">Synapse</span>
         </Link>
       </div>
 

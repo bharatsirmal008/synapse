@@ -45,7 +45,7 @@ const Roadmap: React.FC = () => {
             <aside className="w-80 border-r dark:border-slate-800 flex flex-col bg-gray-50/50 dark:bg-slate-900/30 overflow-y-auto p-6 space-y-6">
                 <header>
                     <h1 className="text-2xl font-black dark:text-white flex items-center gap-3">
-                        <Map className="text-brand-600" /> Synapse
+                        <Map className="text-brand-600" /> <span className="font-logo">Synapse</span>
                     </h1>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Canonical Roadmaps</p>
                 </header>

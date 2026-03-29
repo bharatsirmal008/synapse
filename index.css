@@ -20,6 +20,16 @@
   --color-brand-950: #2e1065;
 }
 
+/* ── Logo Font ── */
+.font-logo {
+  font-family: "Pacifico", cursive;
+  letter-spacing: 0.02em;
+  font-style: italic;
+  display: inline-block;
+  transform: scaleX(1.1);
+  transform-origin: left center;
+}
+
 /* ── Base Styles ── */
 body {
   font-family: "Plus Jakarta Sans", sans-serif;

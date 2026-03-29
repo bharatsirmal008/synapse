@@ -131,7 +131,7 @@ const Login: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-4xl font-black dark:text-white tracking-tighter sm:text-5xl">Synapse</h1>
+          <h1 className="text-4xl font-black dark:text-white tracking-tighter sm:text-5xl font-logo">Synapse</h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium text-lg leading-tight">
             The intelligent engine for your career takeoff.
           </p>
