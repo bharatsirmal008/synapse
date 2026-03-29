@@ -25,6 +25,7 @@ import TranscriptGenerator from './pages/TranscriptGenerator';
 import GPACalculator from './pages/GPACalculator';
 import PomodoroTimer from './pages/PomodoroTimer';
 import Timetable from './pages/Timetable';
+import InterviewPrep from './pages/InterviewPrep';
 
 // Contexts
 const ThemeContext = createContext({ isDark: false, toggle: () => { } });
@@ -52,7 +53,6 @@ const Sidebar = () => {
 
   const navItems = [
     { path: '/dashboard', icon: Layout, label: 'Dashboard' },
-    { path: '/internships', icon: Briefcase, label: 'Opportunities' },
     { path: '/advisor', icon: MessageSquare, label: 'Study Buddy' },
     { path: '/planner', icon: Settings, label: 'Exam Prep' },
     { path: '/roadmap', icon: Map, label: 'Skill Roadmap' },
@@ -65,6 +65,7 @@ const Sidebar = () => {
     { path: '/gpa', icon: Calculator, label: 'GPA Calculator' },
     { path: '/timer', icon: Timer, label: 'Focus Timer' },
     { path: '/timetable', icon: CalendarDays, label: 'Timetable' },
+    { path: '/interview', icon: MessageSquare, label: 'Interview Prep' },
   ];
 
   if (user && isAdmin(user.email)) {
@@ -244,6 +245,7 @@ const App: React.FC = () => {
                 <Route path="/gpa" element={<ProtectedRoute><GPACalculator /></ProtectedRoute>} />
                 <Route path="/timer" element={<ProtectedRoute><PomodoroTimer /></ProtectedRoute>} />
                 <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+                <Route path="/interview" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
                 <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               </Routes>
             </main>

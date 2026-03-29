@@ -28,7 +28,7 @@ const QuizMaker: React.FC = () => {
 
   useEffect(() => {
     if (auth.currentUser) {
-      getQuizHistory(auth.currentUser.uid).then(setHistory).catch(() => {});
+      getQuizHistory(auth.currentUser.uid).then(setHistory).catch(() => { });
     }
   }, [phase]);
 
@@ -172,7 +172,7 @@ const QuizMaker: React.FC = () => {
                       className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all border-2 ${difficulty === d
                         ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300'
                         : 'border-transparent bg-gray-50 dark:bg-slate-800 text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700'
-                      }`}
+                        }`}
                     >{d}</button>
                   ))}
                 </div>
@@ -289,7 +289,7 @@ const QuizMaker: React.FC = () => {
         <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
           <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border dark:border-slate-800 p-10 text-center shadow-sm">
             <div className="relative inline-block mb-6">
-              <div className={`w-32 h-32 rounded-full flex items-center justify-center text-5xl font-black border-8 ${scorePercent >= 70 ? 'border-green-500 text-green-600' : scorePercent >= 40 ? 'border-yellow-500 text-yellow-600' : 'border-red-500 text-red-600'}`}>
+              <div className={`w-32 h-32 rounded-full flex items-center justify-center text-4xl font-black border-8 ${scorePercent >= 70 ? 'border-green-500 text-green-600' : scorePercent >= 40 ? 'border-yellow-500 text-yellow-600' : 'border-red-500 text-red-600'}`}>
                 {scorePercent}%
               </div>
             </div>
