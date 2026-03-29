@@ -53,7 +53,7 @@ const Landing: React.FC = () => {
 
 
       {/* HERO */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col justify-center pt-32 pb-20 overflow-hidden">
 
         <div className="absolute inset-0">
           <Ballpit
