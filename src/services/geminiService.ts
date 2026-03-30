@@ -684,22 +684,78 @@ export const analyzeInterviewResponse = async (
   question: string,
   response: string,
   expectedAnswer: string
-): Promise<{ feedback: string; score: number }> => {
-  const prompt = `Analyze this interview response:
+): Promise<{ feedback: string; score: number; confidenceScore: number; improvement: string }> => {
+  const prompt = `Analyze this interview response for a professional role.
 
 Question: ${question}
 Candidate Response: ${response}
 Expected Answer: ${expectedAnswer}
 
-Provide feedback and a score out of 10. Be constructive.
+Provide:
+1. feedback: Detailed, constructive feedback on the content and delivery.
+2. score: A score out of 10 based on accuracy and professionalism.
+3. confidenceScore: A score out of 10 representing how confident and decisive the response sounds.
+4. improvement: A "Better Way to Say This" version that is more professional, concise, and impactful.
 
-Output JSON: { "feedback": "Detailed feedback...", "score": 7 }`;
+Output JSON: { "feedback": "...", "score": 7, "confidenceScore": 8, "improvement": "..." }`;
 
   const aiResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
-    config: { responseMimeType: "application/json" }
+    config: { 
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          feedback: { type: Type.STRING },
+          score: { type: Type.NUMBER },
+          confidenceScore: { type: Type.NUMBER },
+          improvement: { type: Type.STRING }
+        },
+        required: ["feedback", "score", "confidenceScore", "improvement"]
+      }
+    }
   });
 
-  return JSON.parse(aiResponse.text || '{"feedback": "Unable to analyze", "score": 5}');
+  return JSON.parse(aiResponse.text || '{"feedback": "Unable to analyze", "score": 5, "confidenceScore": 5, "improvement": "Try to be more specific."}');
+};
+
+export const generateOverallInterviewFeedback = async (
+  role: string,
+  difficulty: string,
+  responses: { questionId: string; response: string; feedback: string; score: number; confidenceScore: number; improvement: string }[]
+): Promise<{ summary: string; strengths: string[]; weaknesses: string[]; recommendation: string }> => {
+  const prompt = `You are a senior recruiter analyzing a candidate's full mock interview performance.
+  
+  ROLE: ${role}
+  DIFFICULTY: ${difficulty}
+  INTERVIEW DATA: ${JSON.stringify(responses)}
+
+  Provide:
+  1. summary: A professional summary of the overall performance (3-4 sentences).
+  2. strengths: Top 3 strengths demonstrated.
+  3. weaknesses: Top 3 areas for improvement.
+  4. recommendation: A "Hire/No Hire/Maybe" verdict with a brief explanation.
+
+  Output JSON: { "summary": "...", "strengths": ["..."], "weaknesses": ["..."], "recommendation": "..." }`;
+
+  const aiResponse = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
+    config: { 
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          summary: { type: Type.STRING },
+          strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
+          weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+          recommendation: { type: Type.STRING }
+        },
+        required: ["summary", "strengths", "weaknesses", "recommendation"]
+      }
+    }
+  });
+
+  return JSON.parse(aiResponse.text || '{"summary": "Unable to provide overall feedback.", "strengths": [], "weaknesses": [], "recommendation": "Check individual responses."}');
 };

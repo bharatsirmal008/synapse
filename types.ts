@@ -235,7 +235,14 @@ export interface InterviewSession {
   role: string;
   difficulty: string;
   questions: InterviewQuestion[];
-  responses: { questionId: string; response: string; feedback: string; score: number }[];
+  responses: { 
+    questionId: string; 
+    response: string; 
+    feedback: string; 
+    score: number;
+    confidenceScore: number;
+    improvement: string;
+  }[];
   overallScore: number;
   createdAt: string;
 }
